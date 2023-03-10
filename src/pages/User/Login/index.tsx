@@ -1,23 +1,11 @@
 import Footer from '@/components/Footer';
-import {
-  AlipayCircleOutlined,
-  LockOutlined,
-  MobileOutlined,
-  TaobaoCircleOutlined,
-  UserOutlined,
-  WeiboCircleOutlined,
-} from '@ant-design/icons';
-import {
-  LoginForm,
-  ProFormCaptcha,
-  ProFormCheckbox,
-  ProFormText,
-} from '@ant-design/pro-components';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LoginForm, ProFormCheckbox, ProFormText } from '@ant-design/pro-components';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { FormattedMessage, history, SelectLang, useIntl, useModel, Helmet } from '@umijs/max';
-import { Alert, message, Tabs } from 'antd';
+import { message } from 'antd';
 import Settings from '../../../../config/defaultSettings';
-import React, { useState } from 'react';
+import React from 'react';
 import { flushSync } from 'react-dom';
 import { login } from '@/services/api/authentication';
 
@@ -40,21 +28,6 @@ const Lang = () => {
     <div className={langClassName} data-lang>
       {SelectLang && <SelectLang />}
     </div>
-  );
-};
-
-const LoginMessage: React.FC<{
-  content: string;
-}> = ({ content }) => {
-  return (
-    <Alert
-      style={{
-        marginBottom: 24,
-      }}
-      message={content}
-      type="error"
-      showIcon
-    />
   );
 };
 
@@ -90,11 +63,8 @@ const Login: React.FC = () => {
   const handleSubmit = async (values: any) => {
     try {
       // 登录
-      const msg = await login(
-        { userId: values.username!, password: values.password! },
-        { skipErrorHandler: true },
-      );
-      console.log(msg);
+      const msg = await login({ userId: values.username!, password: values.password! });
+      if (!msg) return;
 
       const defaultLoginSuccessMessage = intl.formatMessage({
         id: 'pages.login.success',

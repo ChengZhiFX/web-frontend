@@ -17,8 +17,8 @@ export default () => {
   const [visible, setVisible] = useState(false);
   const refAction = useRef<ActionType>(null);
   const [id, setId] = useState<number | undefined>();
-  const [selectedRowKeys, selectRow] = useState<string[]>([]);
-  const handleDelete = (userCodes: string[]) => {
+  const [selectedRowKeys, selectRow] = useState<number[]>([]);
+  const handleDelete = (userCodes: number[]) => {
     if (!userCodes || userCodes.length === 0) {
       return;
     }
@@ -55,7 +55,7 @@ export default () => {
       title: '关键词',
       key: 'keyword',
       hideInTable: true,
-      renderFormItem: (item, { type, defaultRender, ...rest }, form) => {
+      renderFormItem: (_: any, { type }) => {
         if (type === 'form') {
           return null;
         }
@@ -137,7 +137,7 @@ export default () => {
         <a
           key="delete"
           onClick={() => {
-            handleDelete([record.userCode!]);
+            handleDelete([record.id!]);
           }}
         >
           删除
@@ -149,7 +149,7 @@ export default () => {
     <PageContainer>
       <ProTable<API.AdminVO>
         actionRef={refAction}
-        rowKey="userCode"
+        rowKey="id"
         scroll={{ x: 100 }}
         search={{
           labelWidth: 120,
@@ -180,14 +180,16 @@ export default () => {
         columns={columns}
         rowSelection={{
           onChange: (rowKeys) => {
-            selectRow(rowKeys as string[]);
+            selectRow(rowKeys as number[]);
           },
         }}
       />
       <InputDialog
         visible={visible}
         onClose={(result) => {
-          result && refAction.current?.reload();
+          if (result) {
+            refAction.current?.reload();
+          }
           setVisible(false);
           setId(undefined);
         }}
