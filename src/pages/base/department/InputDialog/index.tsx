@@ -32,13 +32,19 @@ export default function InputDialog(props: InputDialogProps) {
       contactPhone,
       description,
     };
-    if (props.detailData) {
-      await updateDepartment(data);
-    } else {
-      await addDepartment(data);
+
+    try {
+      if (props.detailData) {
+        await updateDepartment(data, { throwError: true });
+      } else {
+        await addDepartment(data, { throwError: true });
+      }
+    } catch (ex) {
+      return true;
     }
-    message.success('保存成功');
+
     props.onClose(true);
+    message.success('保存成功');
     return true;
   };
 
