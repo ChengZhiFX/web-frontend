@@ -39,6 +39,12 @@ export default [
         component: './base/department',
         access: 'hasPrivilege'
       },
+      {
+        path: '/base/charts',
+        name: 'charts',
+        component: './base/charts',
+        access: 'hasPrivilege'
+      },
     ],
   },
   {

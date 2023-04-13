@@ -8,6 +8,7 @@ export default {
   'menu.system.loginLog': '登录日志',
   'menu.base': '基础数据',
   'menu.base.department': '部门管理',
+  'menu.base.charts': '图标示例',
   'menu.login': '登录',
   'menu.register': '注册',
   'menu.register-result': '注册结果',
