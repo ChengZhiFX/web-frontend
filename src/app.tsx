@@ -79,19 +79,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     waterMarkProps: {
       content: initialState?.currentToken?.userName,
     },
-    itemRender: (route) => {
-      const ar = route.path.substring(1).split('/');
-      console.log(route);
-      if (ar.length === 1 || ar.length === 3) {
-        return <FormattedMessage id={`menu.${ar.join('.')}`} />;
-      }
-
-      return (
-        <Link to={route.path}>
-          <FormattedMessage id={`menu.${ar.join('.')}`} />
-        </Link>
-      );
-    },
     footerRender: () => <Footer />,
     onPageChange: () => {
       const { location } = history;

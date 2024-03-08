@@ -37,13 +37,20 @@ export default [
         path: '/base/department',
         name: 'department',
         component: './base/department',
-        access: 'hasPrivilege'
+        access: 'hasPrivilege',
+      },
+      {
+        path: '/base/department/detail',
+        name: 'departmentDetail',
+        hideInMenu: true,
+        component: './base/department/detail',
+        access: 'hasPrivilege',
       },
       {
         path: '/base/charts',
         name: 'charts',
         component: './base/charts',
-        access: 'hasPrivilege'
+        access: 'hasPrivilege',
       },
     ],
   },
@@ -56,19 +63,19 @@ export default [
         path: '/system/admin',
         name: 'admin',
         component: './system/admin',
-        access: 'hasPrivilege'
+        access: 'hasPrivilege',
       },
       {
         path: '/system/loginLog',
         name: 'loginLog',
         component: './system/loginLog',
-        access: 'hasPrivilege'
+        access: 'hasPrivilege',
       },
       {
         path: '/system/onlineUser',
         name: 'onlineUser',
         component: './system/onlineUser',
-        access: 'hasPrivilege'
+        access: 'hasPrivilege',
       },
     ],
   },

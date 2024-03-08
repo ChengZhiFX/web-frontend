@@ -1,17 +1,21 @@
 import { deleteDepartment, listDepartment } from '@/services/api/department';
-import { convertPageData } from '@/utils/request';
+import { convertPageData, orderBy, waitTime } from '@/utils/request';
 import { openConfirm } from '@/utils/ui';
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined, ExportOutlined } from '@ant-design/icons';
 import { ActionType, PageContainer, ProColumns, ProTable } from '@ant-design/pro-components';
 import { Button } from 'antd';
 import { useRef, useState } from 'react';
 import InputDialog from './InputDialog';
+import { downloadFile } from '@/utils/download-utils';
+import { Link } from '@umijs/max';
 
 export default () => {
   const refAction = useRef<ActionType>(null);
   const [selectedRowKeys, selectRow] = useState<number[]>([]);
   const [department, setDepartment] = useState<API.DepartmentVO>();
+  const [searchProps, setSearchProps] = useState<API.DepartmentQueryDTO>({});
   const [visible, setVisible] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const columns: ProColumns<API.DepartmentVO>[] = [
     {
       title: '部门ID',
@@ -59,6 +63,14 @@ export default () => {
       width: 150,
       search: false,
     },
+    {
+      title: '操作',
+      width: 100,
+      fixed: 'right',
+      dataIndex: 'option',
+      valueType: 'option',
+      render: (_, record) => [<Link to={`detail?id=${record.id}`}>修改</Link>],
+    },
   ];
 
   const handleDelete = async () => {
@@ -69,13 +81,25 @@ export default () => {
     });
   };
 
+  const handleExport = () => {
+    setDownloading(true);
+    downloadFile(`/api/department/exportDepartment`, searchProps, '部门导出表.xls').then(() => {
+      waitTime(1000).then(() => setDownloading(false));
+    });
+  };
+
   return (
     <PageContainer>
       <ProTable<API.DepartmentVO>
         actionRef={refAction}
         rowKey="id"
-        request={async (params = {}) => {
-          return convertPageData(await listDepartment(params));
+        request={async (params = {}, sort) => {
+          const props = {
+            ...params,
+            orderBy: orderBy(sort),
+          };
+          setSearchProps(props);
+          return convertPageData(await listDepartment(props));
         }}
         toolBarRender={() => [
           <Button
@@ -96,6 +120,9 @@ export default () => {
             disabled={!selectedRowKeys?.length}
           >
             <DeleteOutlined /> 删除
+          </Button>,
+          <Button type="default" onClick={handleExport} loading={downloading}>
+            <ExportOutlined /> 导出
           </Button>,
         ]}
         columns={columns}
