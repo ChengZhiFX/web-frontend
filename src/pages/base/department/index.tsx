@@ -8,10 +8,12 @@ import { useRef, useState } from 'react';
 import InputDialog from './InputDialog';
 import { downloadFile } from '@/utils/download-utils';
 import { Link } from '@umijs/max';
+import ImportDialog from './ImportDialog';
 
 export default () => {
   const refAction = useRef<ActionType>(null);
   const [selectedRowKeys, selectRow] = useState<number[]>([]);
+  const [importVisible, setImportVisible] = useState(false);
   const [department, setDepartment] = useState<API.DepartmentVO>();
   const [searchProps, setSearchProps] = useState<API.DepartmentQueryDTO>({});
   const [visible, setVisible] = useState(false);
@@ -121,6 +123,16 @@ export default () => {
           >
             <DeleteOutlined /> 删除
           </Button>,
+          <Button
+            type="primary"
+            key="primary"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setImportVisible(true);
+            }}
+          >
+            导入
+          </Button>,
           <Button type="default" onClick={handleExport} loading={downloading}>
             <ExportOutlined /> 导出
           </Button>,
@@ -139,6 +151,15 @@ export default () => {
           result && refAction.current?.reload();
         }}
         visible={visible}
+      />
+      <ImportDialog
+        visible={importVisible}
+        onClose={(count) => {
+          setImportVisible(false);
+          if (count) {
+            refAction.current?.reload();
+          }
+        }}
       />
     </PageContainer>
   );
