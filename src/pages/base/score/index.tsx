@@ -214,15 +214,6 @@ export default () => {
           >
             <PlusOutlined /> 新建
           </Button>,
-          // <Button
-          //   type="primary"
-          //   key="primary"
-          //   danger
-          //   onClick={handleDelete}
-          //   disabled={!selectedRowKeys?.length}
-          // >
-          //   <DeleteOutlined /> 删除
-          // </Button>,
           <Button
             type="default"
             icon={<ImportOutlined />}

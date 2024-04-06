@@ -12,6 +12,6 @@ export default {
   'component.globalHeader.event.empty': '你已完成所有待办',
   'component.noticeIcon.clear': '清空',
   'component.noticeIcon.cleared': '清空了',
-  'component.noticeIcon.empty': '暂无数据',
+  'component.noticeIcon.empty': '找不到对象',
   'component.noticeIcon.view-more': '查看更多',
 };

@@ -1,4 +1,4 @@
-import { ModalForm, ProForm, ProFormInstance, ProFormText } from '@ant-design/pro-components';
+import {ModalForm, ProForm, ProFormInstance, ProFormSelect, ProFormText} from '@ant-design/pro-components';
 import { message } from 'antd';
 import { useEffect, useRef } from 'react';
 import { waitTime } from '@/utils/request';
@@ -12,6 +12,11 @@ interface InputDialogProps {
 
 export default function InputDialog(props: InputDialogProps) {
   const form = useRef<ProFormInstance>(null);
+  interface options{
+    value: number,
+    label: string,
+  }
+  const option:options[] =[{value:1,label:'秋季'},{value:2,label:'春季'}]
 
   useEffect(() => {
     waitTime().then(() => {
@@ -94,15 +99,17 @@ export default function InputDialog(props: InputDialogProps) {
             },
           ]}
         />
-        <ProFormText
+        <ProFormSelect
           name="semester"
+          width="xs"
           label="学期"
           rules={[
             {
               required: true,
-              message: '请输入学期！',
+              message: '请选择学期！',
             },
           ]}
+          options={option}
         />
       </ProForm.Group>
       <ProForm.Group>
@@ -110,30 +117,51 @@ export default function InputDialog(props: InputDialogProps) {
           name="chineseScore"
           label="语文成绩"
           rules={[
-            {
+            () => ({
+              validator(_, value) {
+                if (value <= 100 && value >= 0) {
+                  return Promise.resolve();
+                }
+                else {
+                  return Promise.reject(new Error("请输入0~100之间的数值"));
+                }
+              },
               required: true,
-              message: '请输入语文成绩！',
-            },
+            }),
           ]}
         />
         <ProFormText
           name="mathScore"
           label="数学成绩"
           rules={[
-            {
+            () => ({
+              validator(_, value) {
+                if (value <= 100 && value >= 0) {
+                  return Promise.resolve();
+                }
+                else {
+                  return Promise.reject(new Error("请输入0~100之间的数值"));
+                }
+              },
               required: true,
-              message: '请输入数学成绩！',
-            },
+            }),
           ]}
         />
         <ProFormText
           name="englishScore"
           label="英语成绩"
           rules={[
-            {
+            () => ({
+              validator(_, value) {
+                if (value <= 100 && value >= 0) {
+                  return Promise.resolve();
+                }
+                else {
+                  return Promise.reject(new Error("请输入0~100之间的数值"));
+                }
+              },
               required: true,
-              message: '请输入英语成绩！',
-            },
+            }),
           ]}
         />
       </ProForm.Group>

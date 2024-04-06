@@ -23,6 +23,7 @@ export default function CalculateDialog(props: CalculateDialogProps) {
       search: false,
       defaultSortOrder: 'ascend',
       sorter: (a,b) => {
+        // @ts-ignore
         return a.classId - b.classId;
       },
     },
@@ -32,6 +33,7 @@ export default function CalculateDialog(props: CalculateDialogProps) {
       width: 80,
       search: false,
       sorter: (a,b) => {
+        // @ts-ignore
         return a.averageChineseScore - b.averageChineseScore;
       },
     },
@@ -41,6 +43,7 @@ export default function CalculateDialog(props: CalculateDialogProps) {
       width: 80,
       search: false,
       sorter: (a,b) => {
+        // @ts-ignore
         return a.averageMathScore - b.averageMathScore;
       },
     },
@@ -50,6 +53,7 @@ export default function CalculateDialog(props: CalculateDialogProps) {
       width: 80,
       search: false,
       sorter: (a,b) => {
+        // @ts-ignore
         return a.averageEnglishScore - b.averageEnglishScore;
       },
     },
@@ -59,6 +63,7 @@ export default function CalculateDialog(props: CalculateDialogProps) {
       width: 80,
       search: false,
       sorter: (a,b) => {
+        // @ts-ignore
         return a.averageTotalScore - b.averageTotalScore;
       },
     },
@@ -132,7 +137,7 @@ export default function CalculateDialog(props: CalculateDialogProps) {
         options={false}
       />
     </ModalForm>
-    
+
   );
 }
 

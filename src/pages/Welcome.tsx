@@ -77,7 +77,7 @@ const InfoCard: React.FC<{
         {desc}
       </div>
       <a href={href} target="_blank" rel="noreferrer">
-        了解更多 {'>'}
+        开始 {'>'}
       </a>
     </div>
   );
@@ -139,19 +139,19 @@ const Welcome: React.FC = () => {
               index={1}
               href="/base/classes"
               title="班级管理"
-              desc="umi 是一个可扩展的企业级前端应用框架,umi 以路由为基础的，同时支持配置式路由和约定式路由，保证路由的功能完备，并以此进行功能扩展。"
+              desc="点击下面连接开始管理您的班级。"
             />
             <InfoCard
               index={2}
               title="学生管理"
               href="/base/students"
-              desc="antd 是基于 Ant Design 设计体系的 React UI 组件库，主要用于研发企业级中后台产品。"
+              desc="点击下面连接开始管理您的学生。"
             />
             <InfoCard
               index={3}
               title="成绩管理"
               href="/base/score"
-              desc="ProComponents 是一个基于 Ant Design 做了更高抽象的模板组件，以 一个组件就是一个页面为开发理念，为中后台开发带来更好的体验。"
+              desc="点击下面连接开始管理您的成绩库。"
             />
           </div>
         </div>

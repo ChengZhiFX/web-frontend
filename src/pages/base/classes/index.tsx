@@ -9,11 +9,13 @@ import InputDialog from './InputDialog';
 import { downloadFile } from '@/utils/download-utils';
 import { Link } from '@umijs/max';
 import ImportDialog from './ImportDialog';
+import StudentsInClassDialog from "./StudentsInClassDialog";
 
 export default () => {
   const refAction = useRef<ActionType>(null);
   const [selectedRowKeys, selectRow] = useState<number[]>([]);
   const [importVisible, setImportVisible] = useState(false);
+  const [studentsInClassVisible, setStudentsInClassVisible] = useState(false);
   const [classes, setClasses] = useState<API.ClassesVO>();
   const [searchProps, setSearchProps] = useState<API.ClassesQueryDTO>({});
   const [visible, setVisible] = useState(false);
@@ -28,6 +30,23 @@ export default () => {
       title: '班级名称',
       dataIndex: 'className',
       width: 100,
+    },
+    {
+      title: '班级人数',
+      dataIndex: 'totalStudents',
+      width: 100,
+      render: (dom, record) => {
+        return (
+          <a
+            onClick={() => {
+              setClasses(record);
+              setStudentsInClassVisible(true);
+            }}
+          >
+            {dom}
+          </a>
+        );
+      },
     },
     {
       title: '语文教师',
@@ -83,7 +102,7 @@ export default () => {
     if (!selectedRowKeys?.length) return;
     openConfirm(`确实要永久删除这 ${selectedRowKeys.length} 项吗？`, async () => {
       await deleteClasses(selectedRowKeys);
-      refAction.current?.reload();
+      window.location.reload();
     });
   };
 
@@ -173,6 +192,16 @@ export default () => {
         visible={importVisible}
         onClose={(count) => {
           setImportVisible(false);
+          if (count) {
+            refAction.current?.reload();
+          }
+        }}
+      />
+      <StudentsInClassDialog
+        detailData={classes}
+        visible={studentsInClassVisible}
+        onClose={(count) => {
+          setStudentsInClassVisible(false);
           if (count) {
             refAction.current?.reload();
           }

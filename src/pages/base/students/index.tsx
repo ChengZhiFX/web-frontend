@@ -34,11 +34,12 @@ export default () => {
       title: '学号',
       dataIndex: 'studentNum',
       width: 100,
-      
+
     },
     {
       title: '性别',
       dataIndex: 'gender',
+      search: false,
       filters: true,
       onFilter: true,
       ellipsis: true,
@@ -113,7 +114,7 @@ export default () => {
     if (!selectedRowKeys?.length) return;
     openConfirm(`确实要永久删除这 ${selectedRowKeys.length} 项吗？`, async () => {
       await deleteStudents(selectedRowKeys);
-      refAction.current?.reload();
+      window.location.reload();
     });
   };
 

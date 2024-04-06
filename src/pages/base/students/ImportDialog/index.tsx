@@ -62,15 +62,6 @@ export default (props: InputDialogProps) => {
           <input type="file" ref={inputFileRef} style={{ flex: 1 }} />
         </div>
       </Form.Item>
-      <ProFormUploadDragger
-        max={4}
-        label="Dragger"
-        name="dragger"
-        fieldProps={{
-          name: 'file',
-          listType: 'picture-card',
-        }}
-        action="/upload.do"/>
       <Button type="default" onClick={handleExport} loading={downloading}>
             <DownloadOutlined /> 下载导入模板
           </Button>,
