@@ -34,8 +34,27 @@ export default [
     icon: 'appstore',
     routes: [
       {
+        path: '/base/students',
+        name: 'students',
+        component: './base/students',
+        access: 'hasPrivilege',
+      },
+      {
+        path: '/base/classes',
+        name: 'classes',
+        component: './base/classes',
+        access: 'hasPrivilege',
+      },
+      {
+        path: '/base/score',
+        name: 'score',
+        component: './base/score',
+        access: 'hasPrivilege',
+      },
+      {
         path: '/base/department',
         name: 'department',
+        hideInMenu: true,
         component: './base/department',
         access: 'hasPrivilege',
       },
@@ -49,6 +68,7 @@ export default [
       {
         path: '/base/charts',
         name: 'charts',
+        hideInMenu: true,
         component: './base/charts',
         access: 'hasPrivilege',
       },

@@ -109,10 +109,12 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     ],
     links: isDev
       ? [
+        /*
           <a key="openapi" href="http://localhost:9311/swagger-ui.html" target="_blank">
             <LinkOutlined />
             <span>OpenAPI 文档</span>
           </a>,
+          */
         ]
       : [],
     menuHeaderRender: undefined,
