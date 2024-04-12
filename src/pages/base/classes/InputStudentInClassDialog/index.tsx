@@ -1,4 +1,4 @@
-import { ModalForm, ProForm, ProFormInstance, ProFormText, ProFormSelect,} from '@ant-design/pro-components';
+import { ModalForm, ProForm, ProFormInstance, ProFormText, ProFormSelect, } from '@ant-design/pro-components';
 import {Input, message} from 'antd';
 import { useEffect, useRef } from 'react';
 import { waitTime } from '@/utils/request';
@@ -25,7 +25,8 @@ export default function InputDialog(props: InputDialogProps) {
   classesRecord!.forEach((item: any, index: number)=>{
     classesOption.push({value: classesRecord![index].id,label:classesRecord![index].id});
   })
-
+  let classNum = (props.detailData?.gender === undefined)? props.detailData?.id : undefined;
+  const studentId = (props.detailData?.gender !== undefined)? props.detailData?.id : undefined;
   useEffect(() => {
     waitTime().then(() => {
       if (props.detailData) {
@@ -38,18 +39,19 @@ export default function InputDialog(props: InputDialogProps) {
 
   const onFinish = async (values: any) => {
     const { studentName, studentNum, gender, parentName, parentTel, classId } = values;
+    classNum = (classNum === undefined)? classId: classNum;
     const data: API.StudentsDTO = {
-      id: props.detailData?.id,
+      id: studentId,
       studentName,
       studentNum,
       gender,
       parentName,
       parentTel,
-      classId,
+      classId: classNum,
     };
 
     try {
-      if (props.detailData) {
+      if (props.detailData?.gender !== undefined) {
         await updateAStudent(data, { throwError: true });
       } else {
         await addAStudent(data, { throwError: true });
@@ -57,64 +59,62 @@ export default function InputDialog(props: InputDialogProps) {
     } catch (ex) {
       return true;
     }
-
     props.onClose(true);
     message.success('您是最新的！');
     return true;
   };
 
   return (
-    <ModalForm
-      width={600}
-      onFinish={onFinish}
-      formRef={form}
-      modalProps={{
-        destroyOnClose: true,
-        onCancel: () => props.onClose(false),
-      }}
-      title={props.detailData ? '修改学生' : '新建学生'}
-      open={props.visible}
-    >
+      <ModalForm
+          width={600}
+          onFinish={onFinish}
+          formRef={form}
+          modalProps={{
+            destroyOnClose: true,
+            onCancel: () => props.onClose(false),
+          }}
+          title={props.detailData?.gender !== undefined ? '修改学生' : '新建学生'}
+          open={props.visible}
+      >
         <ProForm.Group>
           <ProFormText
-            name="studentName"
-            label="姓名"
-            rules={[
-              {
-                required: true,
-                message: '请输入学生姓名！',
-              },
-            ]}
+              name="studentName"
+              label="姓名"
+              rules={[
+                {
+                  required: true,
+                  message: '请输入学生姓名！',
+                },
+              ]}
           />
           <ProFormSelect
-            name="gender"
-            width="xs"
-            label="性别"
-            rules={[
-              {
-                required: true,
-                message: '请选择性别！',
-              },
-            ]}
-            options={genderOption}
+              name="gender"
+              width="xs"
+              label="性别"
+              rules={[
+                {
+                  required: true,
+                  message: '请选择性别！',
+                },
+              ]}
+              options={genderOption}
           />
         </ProForm.Group>
         <ProForm.Group>
           <ProFormSelect
-            name="classId"
-            width={200}
-            label="班级号"
-            rules={[
-              {
-                required: true,
-                message: '请选择班级号！',
-              },
-            ]}
-            options={classesOption}
-            showSearch
-            fieldProps={{
-              placeholder: '请输入或选择',
-            }}
+              name="classId"
+              width={200}
+              label="班级号"
+              rules={[
+                {
+                  required: true,
+                  message: '请选择班级号！',
+                },
+              ]}
+              disabled
+              options={classesOption}
+              initialValue={classNum}
+              showSearch
           />
           <ProFormText
             name="studentNum"
@@ -131,7 +131,7 @@ export default function InputDialog(props: InputDialogProps) {
                 },
               }),
             ]}
-            disabled={props.detailData !== undefined}
+              disabled={props.detailData?.gender !== undefined}
             fieldProps={{
               placeholder: '请输入10位数字',
             }}
@@ -140,22 +140,22 @@ export default function InputDialog(props: InputDialogProps) {
         <ProForm.Group>
           <ProFormText name="parentName" label="家长姓名" />
           <ProFormText
-            name="parentTel"
-            label="家长电话"
-            rules={[
-              () => ({
-                validator(_, value) {
-                  if (value === undefined || value.length <= 11) {
-                    return Promise.resolve();
-                  }
-                  else {
-                    return Promise.reject(new Error("请输入正确的电话号码"));
-                  }
-                },
-              }),
-            ]}
+              name="parentTel"
+              label="家长电话"
+              rules={[
+                () => ({
+                  validator(_, value) {
+                    if (value === undefined || value.length <= 11) {
+                      return Promise.resolve();
+                    }
+                    else {
+                      return Promise.reject(new Error("请输入正确的电话号码"));
+                    }
+                  },
+                }),
+              ]}
           />
         </ProForm.Group>
-    </ModalForm>
+      </ModalForm>
   );
 }

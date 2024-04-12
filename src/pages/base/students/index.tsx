@@ -9,6 +9,7 @@ import InputDialog from './InputDialog';
 import { downloadFile } from '@/utils/download-utils';
 import { Link } from '@umijs/max';
 import ImportDialog from './ImportDialog';
+import ScoresOfStudentDialog from "@/pages/base/students/ScoresOfStudentDialog";
 
 export default () => {
   const refAction = useRef<ActionType>(null);
@@ -18,23 +19,24 @@ export default () => {
   const [searchProps, setSearchProps] = useState<API.StudentsQueryDTO>({});
   const [visible, setVisible] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [scoresOfStudentVisible, setScoresOfStudentVisible] = useState(false);
   const columns: ProColumns<API.StudentsVO>[] = [
     {
       title: 'ID',
       dataIndex: 'id',
-      width: 100,
+      width: 60,
       search: false,
     },
     {
       title: '姓名',
       dataIndex: 'studentName',
-      width: 100,
+      width: 80,
     },
     {
       title: '学号',
       dataIndex: 'studentNum',
       width: 100,
-
+      sorter: true,
     },
     {
       title: '性别',
@@ -43,7 +45,7 @@ export default () => {
       filters: true,
       onFilter: true,
       ellipsis: true,
-      width: 60,
+      width: 50,
       render: (_: any, record) => {
         return record?.gender ? '男' : '女';
       },
@@ -58,9 +60,15 @@ export default () => {
       }
     },
     {
+      title: '班级号',
+      dataIndex: 'classId',
+      width: 80,
+      sorter: true,
+    },
+    {
       title: '家长姓名',
       dataIndex: 'parentName',
-      width: 100,
+      width: 80,
       search: false,
     },
     {
@@ -70,18 +78,21 @@ export default () => {
       search: false,
     },
     {
-      title: '所属班级号',
-      dataIndex: 'classId',
-      width: 100,
-      sorter: true,
-    },
-    {
       title: '操作',
-      width: 100,
+      width: 120,
       fixed: 'right',
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
+        <a
+          key="query"
+          onClick={() => {
+            setStudents(record);
+            setScoresOfStudentVisible(true);
+          }}
+        >
+          查看/修改成绩
+        </a>,
         <a
           key="modify"
           onClick={() => {
@@ -150,6 +161,10 @@ export default () => {
             </Space>
           );
         }}
+        search={{
+          span: 6,
+          showHiddenNum: true
+        }}
         toolBarRender={() => [
           <Button
             type="primary"
@@ -162,15 +177,6 @@ export default () => {
           >
             <PlusOutlined /> 新建
           </Button>,
-          // <Button
-          //   type="primary"
-          //   key="primary"
-          //   danger
-          //   onClick={handleDelete}
-          //   disabled={!selectedRowKeys?.length}
-          // >
-          //   <DeleteOutlined /> 删除
-          // </Button>,
           <Button
             type="default"
             icon={<ImportOutlined />}
@@ -204,6 +210,16 @@ export default () => {
         visible={importVisible}
         onClose={(count) => {
           setImportVisible(false);
+          if (count) {
+            refAction.current?.reload();
+          }
+        }}
+      />
+      <ScoresOfStudentDialog
+        detailData={students}
+        visible={scoresOfStudentVisible}
+        onClose={(count) => {
+          setScoresOfStudentVisible(false);
           if (count) {
             refAction.current?.reload();
           }

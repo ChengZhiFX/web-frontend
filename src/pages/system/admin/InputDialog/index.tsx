@@ -62,7 +62,7 @@ export default function InputDialog(props: InputDialogProps) {
     } else {
       await addAdmin(values);
     }
-    message.success('保存成功');
+    message.success('您是最新的！');
     props.onClose(true);
     return true;
   };

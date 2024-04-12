@@ -44,7 +44,7 @@ export default function InputDialog(props: InputDialogProps) {
     }
 
     props.onClose(true);
-    message.success('保存成功');
+    message.success('您是最新的！');
     return true;
   };
 

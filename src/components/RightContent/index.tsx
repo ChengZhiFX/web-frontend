@@ -13,6 +13,9 @@ const GlobalHeaderRight: React.FC = () => {
       marginLeft: 'auto',
       overflow: 'hidden',
       gap: 8,
+      justifyContent: 'center',
+      alignContent: 'center',
+      flexWrap: 'wrap',
     };
   });
 
@@ -41,7 +44,7 @@ const GlobalHeaderRight: React.FC = () => {
   return (
     <div className={className}>
       <Avatar />
-      <SelectLang className={actionClassName} />
+      {/*<SelectLang className={actionClassName} />*/}
     </div>
   );
 };

@@ -3,68 +3,93 @@ import { convertPageData, orderBy, waitTime } from '@/utils/request';
 import { ActionType, PageContainer, ProColumns, ProTable } from '@ant-design/pro-components';
 import {Button, message} from 'antd';
 import { useEffect, useRef, useState } from 'react';
-import {deleteStudents, listStudents} from "@/services/api/students";
 import {openConfirm} from "@/utils/ui";
-import {ExportOutlined, ImportOutlined, PlusOutlined} from "@ant-design/icons";
-import InputStudentInClassDialog from "@/pages/base/classes/InputStudentInClassDialog";
+import {deleteScores, listScores} from "@/services/api/score";
+import InputDialog from "@/pages/base/score/InputDialog";
+import {PlusOutlined} from "@ant-design/icons";
 
-interface StudentsInClassDialogProps {
-  detailData?: API.ClassesDTO;
+
+interface ScoresOfStudentDialogProps {
+  detailData?: API.StudentsDTO;
   visible: boolean;
   onClose: (result: boolean) => void;
 }
 
-export default function StudentsInClassDialog(props: StudentsInClassDialogProps) {
+export default function ScoresOfStudentDialog(props: ScoresOfStudentDialogProps) {
   const refAction = useRef<ActionType>(null);
   const [searchProps, setSearchProps] = useState<API.ClassesQueryDTO>({});
   const [students, setStudents] = useState<API.StudentsVO>();
   const [visible, setVisible] = useState(false);
   const form = useRef<ProFormInstance>(null);
   const [selectedRowKeys, selectRow] = useState<number[]>([]);
-  const columns: ProColumns<API.StudentsVO>[] = [
+  const [score, setScore] = useState<API.ScoreVO>();
+  const columns: ProColumns<API.ScoreVO>[] = [
     {
-      title: '姓名',
-      dataIndex: 'studentName',
-      width: 80,
-    },
-    {
-      title: '学号',
-      dataIndex: 'studentNum',
-      width: 120,
-
-    },
-    {
-      title: '性别',
-      dataIndex: 'gender',
+      title: '流水号',
+      dataIndex: 'id',
+      width: 60,
       search: false,
+    },
+    {
+      title: '学年',
+      dataIndex: 'academicYear',
+      width: 80,
+      sorter: (a,b) => {
+        return a.academicYear! - b.academicYear!;
+      },
+    },
+    {
+      title: '学期',
+      dataIndex: 'semester',
       filters: true,
       onFilter: true,
       ellipsis: true,
-      width: 70,
-      render: (_: any, record) => {
-        return record?.gender ? '男' : '女';
-      },
+      width: 80,
       valueType: 'select',
       valueEnum: {
-        0: {
-          text: '女',
-        },
         1: {
-          text: '男',
+          text: '秋季',
+        },
+        2: {
+          text: '春季',
         },
       }
     },
     {
-      title: '家长姓名',
-      dataIndex: 'parentName',
-      width: 100,
+      title: '语文成绩',
+      dataIndex: 'chineseScore',
+      width: 90,
       search: false,
+      sorter: (a,b) => {
+        return a.chineseScore! - b.chineseScore!;
+      },
     },
     {
-      title: '家长电话',
-      dataIndex: 'parentTel',
-      width: 100,
+      title: '数学成绩',
+      dataIndex: 'mathScore',
+      width: 90,
       search: false,
+      sorter: (a,b) => {
+        return a.mathScore! - b.mathScore!;
+      },
+    },
+    {
+      title: '英语成绩',
+      dataIndex: 'englishScore',
+      width: 90,
+      search: false,
+      sorter: (a,b) => {
+        return a.englishScore! - b.englishScore!;
+      },
+    },
+    {
+      title: '总分',
+      dataIndex: 'totalScore',
+      width: 90,
+      search: false,
+      sorter: (a,b) => {
+        return a.totalScore! - b.totalScore!;
+      },
     },
     {
       title: '操作',
@@ -76,7 +101,7 @@ export default function StudentsInClassDialog(props: StudentsInClassDialogProps)
         <a
           key="modify"
           onClick={() => {
-            setStudents(record);
+            setScore(record);
             setVisible(true);
           }}
         >
@@ -87,7 +112,7 @@ export default function StudentsInClassDialog(props: StudentsInClassDialogProps)
           onClick={async () => {
             openConfirm(`确实要永久性地删除此记录吗？`, async () => {
               let arr:number[] = [record.id!];
-              await deleteStudents(arr);
+              await deleteScores(arr);
               refAction.current?.reload();
             });
           }}
@@ -109,14 +134,14 @@ export default function StudentsInClassDialog(props: StudentsInClassDialogProps)
 
   return (
     <ModalForm
-      width={700}
+      width={800}
       onFinish={onFinish}
       formRef={form}
       modalProps={{
         destroyOnClose: true,
         onCancel: () => props.onClose(false),
       }}
-      title={props.detailData?.className + ' 的学生'}
+      title={props.detailData?.studentName + ' 的成绩单'}
       submitter={{
         searchConfig: {
           submitText: '好',
@@ -131,13 +156,13 @@ export default function StudentsInClassDialog(props: StudentsInClassDialogProps)
     >
       <ProTable<API.StudentsVO>
         actionRef={refAction}
-        rowKey="classId"
+        rowKey="studentNum"
         request={async (params = {}) => {
-          const data: API.StudentsQueryDTO = {
+          const data: API.ScoreQueryDTO = {
             ...params,
-            classId: props.detailData?.id,
+            studentNum: props.detailData?.studentNum,
           };
-          return convertPageData(await listStudents(data));
+          return convertPageData(await listScores(data));
         }}
         columns={columns}
         search={false}
@@ -146,7 +171,7 @@ export default function StudentsInClassDialog(props: StudentsInClassDialogProps)
             type="primary"
             key="primary"
             onClick={() => {
-              setStudents(props.detailData);
+              setScore(props.detailData);
               setVisible(true);
             }}
             disabled={selectedRowKeys.length>0}
@@ -155,8 +180,8 @@ export default function StudentsInClassDialog(props: StudentsInClassDialogProps)
           </Button>,
         ]}
       />
-      <InputStudentInClassDialog
-        detailData={students}
+      <InputDialog
+        detailData={score}
         onClose={(result) => {
           setVisible(false);
           result && refAction.current?.reload();

@@ -1,4 +1,4 @@
-import { ModalForm, ProForm, ProFormInstance, ProFormText } from '@ant-design/pro-components';
+import {ModalForm, ProForm, ProFormInstance, ProFormSelect, ProFormText} from '@ant-design/pro-components';
 import { convertPageData, orderBy, waitTime } from '@/utils/request';
 import { ActionType, PageContainer, ProColumns, ProTable } from '@ant-design/pro-components';
 import { message } from 'antd';
@@ -14,7 +14,16 @@ interface CalculateDialogProps {
 export default function CalculateDialog(props: CalculateDialogProps) {
   const refAction = useRef<ActionType>(null);
   const form = useRef<ProFormInstance>(null);
-  const [selectedRowKeys, selectRow] = useState<number[]>([]);
+  interface options{
+    value: number,
+    label: string,
+  }
+  const option:options[] =[{value:1,label:'秋季'},{value:2,label:'春季'}]
+  const yearArray: string[] = []
+  const isSpring: number = new Date().getMonth()<8? 1:0;
+  for (let i = new Date().getFullYear() - isSpring; i >= new Date().getFullYear() - isSpring - 5; i--) {
+    yearArray.push(i.toString());
+  }
   const columns: ProColumns<API.AverageVO>[] = [
     {
       title: '班级号',
@@ -23,9 +32,15 @@ export default function CalculateDialog(props: CalculateDialogProps) {
       search: false,
       defaultSortOrder: 'ascend',
       sorter: (a,b) => {
-        // @ts-ignore
-        return a.classId - b.classId;
+        return a.classId! - b.classId!;
       },
+    },
+    {
+      title: '班级名称',
+      dataIndex: 'className',
+      width: 80,
+      search: false,
+      sorter: false,
     },
     {
       title: '语文平均分',
@@ -33,8 +48,7 @@ export default function CalculateDialog(props: CalculateDialogProps) {
       width: 80,
       search: false,
       sorter: (a,b) => {
-        // @ts-ignore
-        return a.averageChineseScore - b.averageChineseScore;
+        return a.averageChineseScore! - b.averageChineseScore!;
       },
     },
     {
@@ -43,8 +57,7 @@ export default function CalculateDialog(props: CalculateDialogProps) {
       width: 80,
       search: false,
       sorter: (a,b) => {
-        // @ts-ignore
-        return a.averageMathScore - b.averageMathScore;
+        return a.averageMathScore! - b.averageMathScore!;
       },
     },
     {
@@ -53,18 +66,16 @@ export default function CalculateDialog(props: CalculateDialogProps) {
       width: 80,
       search: false,
       sorter: (a,b) => {
-        // @ts-ignore
-        return a.averageEnglishScore - b.averageEnglishScore;
+        return a.averageEnglishScore! - b.averageEnglishScore!;
       },
     },
     {
       title: '总平均分',
       dataIndex: 'averageTotalScore',
-      width: 80,
+      width: 70,
       search: false,
       sorter: (a,b) => {
-        // @ts-ignore
-        return a.averageTotalScore - b.averageTotalScore;
+        return a.averageTotalScore! - b.averageTotalScore!;
       },
     },
   ];
@@ -78,7 +89,7 @@ export default function CalculateDialog(props: CalculateDialogProps) {
       }
     });
   }, [props.detailData, props.visible]);
-  var data: API.AverageQueryDTO;
+  let data: API.AverageQueryDTO;
   const onFinish = async (values: any) => {
     const { academicYear, semester } = values;
     data = {
@@ -91,7 +102,7 @@ export default function CalculateDialog(props: CalculateDialogProps) {
 
   return (
     <ModalForm
-      width={600}
+      width={700}
       onFinish={onFinish}
       formRef={form}
       modalProps={{
@@ -108,8 +119,9 @@ export default function CalculateDialog(props: CalculateDialogProps) {
       open={props.visible}
     >
       <ProForm.Group>
-        <ProFormText
+        <ProFormSelect
           name="academicYear"
+          width='sm'
           label="学年"
           rules={[
             {
@@ -117,8 +129,15 @@ export default function CalculateDialog(props: CalculateDialogProps) {
               message: '请输入学年！',
             },
           ]}
+          options={yearArray}
+          showSearch
         />
-        <ProFormText name="semester" label="学期"/>
+        <ProFormSelect
+          name="semester"
+          width='sm'
+          label="学期"
+          options={option}
+        />
       </ProForm.Group>
       <ProTable<API.AverageVO>
         actionRef={refAction}

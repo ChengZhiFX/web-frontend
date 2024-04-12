@@ -28,7 +28,7 @@ export default () => {
 
     try {
       await updateDepartment(data, { throwError: true });
-      message.success('保存成功');
+      message.success('您是最新的！');
       history.push('/base/department');
     } catch (ex) {
       return true;

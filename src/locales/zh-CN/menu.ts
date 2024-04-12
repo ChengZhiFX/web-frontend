@@ -1,5 +1,5 @@
 export default {
-  'menu.welcome': '欢迎',
+  'menu.welcome': '仪表板',
   'menu.more-blocks': '更多区块',
   'menu.home': '首页',
   'menu.system': '系统管理',

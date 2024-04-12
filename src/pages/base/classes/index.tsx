@@ -16,10 +16,12 @@ export default () => {
   const [selectedRowKeys, selectRow] = useState<number[]>([]);
   const [importVisible, setImportVisible] = useState(false);
   const [studentsInClassVisible, setStudentsInClassVisible] = useState(false);
+  const [inputStudentInClassVisible, setInputStudentInClassVisible] = useState(false);
   const [classes, setClasses] = useState<API.ClassesVO>();
   const [searchProps, setSearchProps] = useState<API.ClassesQueryDTO>({});
   const [visible, setVisible] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [students, setStudents] = useState<API.StudentsVO>();
   const columns: ProColumns<API.ClassesVO>[] = [
     {
       title: '班级号',
@@ -34,7 +36,7 @@ export default () => {
     {
       title: '班级人数',
       dataIndex: 'totalStudents',
-      width: 100,
+      width: 60,
       render: (dom, record) => {
         return (
           <a
@@ -47,29 +49,39 @@ export default () => {
           </a>
         );
       },
+      search: false,
     },
     {
       title: '语文教师',
       dataIndex: 'chineseTeacher',
-      width: 100,
+      width: 80,
     },
     {
       title: '数学教师',
       dataIndex: 'mathTeacher',
-      width: 100,
+      width: 80,
     },
     {
       title: '英语教师',
       dataIndex: 'englishTeacher',
-      width: 100,
+      width: 80,
     },
     {
       title: '操作',
-      width: 100,
+      width: 160,
       fixed: 'right',
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
+        <a
+          key="query"
+          onClick={() => {
+            setClasses(record);
+            setStudentsInClassVisible(true);
+          }}
+        >
+          查看/修改学生
+        </a>,
         <a
           key="modify"
           onClick={() => {
@@ -79,7 +91,7 @@ export default () => {
         >
           修改
         </a>,
-        <a
+      <a
         key="delete"
         onClick={async () => {
           openConfirm(`确实要永久性地删除此记录吗？`, async () => {
@@ -138,6 +150,9 @@ export default () => {
             </Space>
           );
         }}
+        search={{
+          showHiddenNum: true
+        }}
         toolBarRender={() => [
           <Button
             type="primary"
@@ -150,15 +165,6 @@ export default () => {
           >
             <PlusOutlined /> 新建
           </Button>,
-          // <Button
-          //   type="primary"
-          //   key="primary"
-          //   danger
-          //   onClick={handleDelete}
-          //   disabled={!selectedRowKeys?.length}
-          // >
-          //   <DeleteOutlined /> 删除
-          // </Button>,
           <Button
           type="default"
           icon={<ImportOutlined />}

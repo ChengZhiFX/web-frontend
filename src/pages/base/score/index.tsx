@@ -1,4 +1,4 @@
-import { deleteScores, deleteAScore, listScores } from '@/services/api/score';
+import { deleteScores, listScores } from '@/services/api/score';
 import { convertPageData, orderBy, waitTime } from '@/utils/request';
 import { openConfirm } from '@/utils/ui';
 import { PlusOutlined, ImportOutlined, ExportOutlined, CalculatorOutlined } from '@ant-design/icons';
@@ -28,9 +28,20 @@ export default () => {
       search: false,
     },
     {
+      title: '姓名',
+      dataIndex: 'studentName',
+      width: 60,
+    },
+    {
       title: '学号',
       dataIndex: 'studentNum',
       width: 120,
+    },
+    {
+      title: '班级号',
+      dataIndex: 'classId',
+      width: 80,
+      sorter: true,
     },
     {
       title: '语文成绩',
@@ -49,6 +60,13 @@ export default () => {
     {
       title: '英语成绩',
       dataIndex: 'englishScore',
+      width: 90,
+      sorter: true,
+      search: false,
+    },
+    {
+      title: '总分',
+      dataIndex: 'totalScore',
       width: 90,
       sorter: true,
       search: false,
@@ -77,34 +95,14 @@ export default () => {
       }
     },
     {
-      title: '班级号',
-      dataIndex: 'classId',
-      width: 80,
-      sorter: true,
-    },
-    {
       title: '录入时间',
-      width: 140,
+      width: 90,
       key: 'showTime',
       search: false,
       sorter: true,
       dataIndex: 'entryEvent',
       valueType: 'dateTime',
     },
-    // {
-    //   title: '录入时间',
-    //   dataIndex: 'entryEvent',
-    //   valueType: 'dateRange',
-    //   hideInTable: true,
-    //   search: {
-    //     transform: (value) => {
-    //       return {
-    //         startTime: value[0],
-    //         endTime: value[1],
-    //       };
-    //     },
-    //   },
-    // },
     {
       title: '操作',
       width: 100,
@@ -191,6 +189,10 @@ export default () => {
               <a onClick={handleDelete} style={{color: '#FF4D4F'}}>批量删除</a>
             </Space>
           );
+        }}
+        search={{
+          span: 6,
+          showHiddenNum: true
         }}
         toolBarRender={() => [
           <Button
