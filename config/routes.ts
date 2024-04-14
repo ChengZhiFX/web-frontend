@@ -34,15 +34,15 @@ export default [
     icon: 'appstore',
     routes: [
       {
-        path: '/base/students',
-        name: 'students',
-        component: './base/students',
-        access: 'hasPrivilege',
-      },
-      {
         path: '/base/classes',
         name: 'classes',
         component: './base/classes',
+        access: 'hasPrivilege',
+      },
+      {
+        path: '/base/students',
+        name: 'students',
+        component: './base/students',
         access: 'hasPrivilege',
       },
       {

@@ -1,4 +1,4 @@
-import { deleteAStudent, deleteStudents, listStudents } from '@/services/api/students';
+import { deleteStudents, listStudents } from '@/services/api/students';
 import { convertPageData, orderBy, waitTime } from '@/utils/request';
 import { openConfirm } from '@/utils/ui';
 import { PlusOutlined, ImportOutlined, ExportOutlined } from '@ant-design/icons';
@@ -24,7 +24,7 @@ export default () => {
     {
       title: 'ID',
       dataIndex: 'id',
-      width: 60,
+      width: 50,
       search: false,
     },
     {
@@ -35,7 +35,7 @@ export default () => {
     {
       title: '学号',
       dataIndex: 'studentNum',
-      width: 100,
+      width: 90,
       sorter: true,
     },
     {
@@ -74,7 +74,7 @@ export default () => {
     {
       title: '家长电话',
       dataIndex: 'parentTel',
-      width: 100,
+      width: 90,
       search: false,
     },
     {

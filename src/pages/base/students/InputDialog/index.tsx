@@ -1,5 +1,5 @@
 import { ModalForm, ProForm, ProFormInstance, ProFormText, ProFormSelect,} from '@ant-design/pro-components';
-import {Input, message} from 'antd';
+import { message} from 'antd';
 import { useEffect, useRef } from 'react';
 import { waitTime } from '@/utils/request';
 import { addAStudent, updateAStudent } from '@/services/api/students';
@@ -122,15 +122,17 @@ export default function InputDialog(props: InputDialogProps) {
             rules={[
               () => ({
                 validator(_, value) {
-                  if (Number(value) <= 2147483647 && value.length === 10) {
+                  if (Number(value) <= 2147483647 && Number(value) >= Math.pow(10,9)) {
                     return Promise.resolve();
                   }
                   else {
                     return Promise.reject(new Error("请输入有效的10位数字"));
                   }
                 },
+                required: true
               }),
-            ]}
+            ]
+            }
             disabled={props.detailData !== undefined}
             fieldProps={{
               placeholder: '请输入10位数字',
@@ -145,7 +147,7 @@ export default function InputDialog(props: InputDialogProps) {
             rules={[
               () => ({
                 validator(_, value) {
-                  if (value === undefined || value.length <= 11) {
+                  if (value === undefined || value === null || Number(value) <= 2*Math.pow(10,10)) {
                     return Promise.resolve();
                   }
                   else {

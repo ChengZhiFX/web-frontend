@@ -1,11 +1,11 @@
 import { ModalForm, ProForm, ProFormInstance, ProFormText } from '@ant-design/pro-components';
 import { convertPageData, orderBy, waitTime } from '@/utils/request';
-import { ActionType, PageContainer, ProColumns, ProTable } from '@ant-design/pro-components';
-import {Button, message} from 'antd';
+import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+import { Button, message, Space} from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import {deleteStudents, listStudents} from "@/services/api/students";
 import {openConfirm} from "@/utils/ui";
-import {ExportOutlined, ImportOutlined, PlusOutlined} from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import InputStudentInClassDialog from "@/pages/base/classes/InputStudentInClassDialog";
 
 interface StudentsInClassDialogProps {
@@ -107,6 +107,14 @@ export default function StudentsInClassDialog(props: StudentsInClassDialogProps)
     return true;
   };
 
+  const handleDelete = async () => {
+    if (!selectedRowKeys?.length) return;
+    openConfirm(`确实要永久删除这 ${selectedRowKeys.length} 项吗？`, async () => {
+      await deleteStudents(selectedRowKeys);
+      window.location.reload();
+    });
+  };
+
   return (
     <ModalForm
       width={700}
@@ -131,7 +139,7 @@ export default function StudentsInClassDialog(props: StudentsInClassDialogProps)
     >
       <ProTable<API.StudentsVO>
         actionRef={refAction}
-        rowKey="classId"
+        rowKey="studentNum"
         request={async (params = {}) => {
           const data: API.StudentsQueryDTO = {
             ...params,
@@ -154,6 +162,23 @@ export default function StudentsInClassDialog(props: StudentsInClassDialogProps)
             <PlusOutlined /> 新建
           </Button>,
         ]}
+        rowSelection={{
+          onChange: (rowKeys) => {
+            selectRow(rowKeys as number[]);
+          },
+        }}
+        tableAlertOptionRender={({
+                                   selectedRowKeys,
+                                   selectedRows,
+                                   onCleanSelected,
+                                 }) => {
+          return (
+            <Space size={16}>
+              <a style={{ marginInlineStart: 8 }} onClick={onCleanSelected}> 取消选择 </a>
+              <a onClick={handleDelete} style={{color: '#FF4D4F'}}>批量删除</a>
+            </Space>
+          );
+        }}
       />
       <InputStudentInClassDialog
         detailData={students}

@@ -142,7 +142,7 @@ export default () => {
     if (!selectedRowKeys?.length) return;
     openConfirm(`确实要永久删除这 ${selectedRowKeys.length} 项吗？`, async () => {
       await deleteScores(selectedRowKeys);
-      refAction.current?.reload();
+      window.location.reload();
     });
   };
 

@@ -1,13 +1,12 @@
 import { ModalForm, ProForm, ProFormInstance, ProFormText } from '@ant-design/pro-components';
 import { convertPageData, orderBy, waitTime } from '@/utils/request';
-import { ActionType, PageContainer, ProColumns, ProTable } from '@ant-design/pro-components';
-import {Button, message} from 'antd';
+import { ActionType, ProColumns, ProTable } from '@ant-design/pro-components';
+import { Button, message, Space} from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import {openConfirm} from "@/utils/ui";
 import {deleteScores, listScores} from "@/services/api/score";
 import InputDialog from "@/pages/base/score/InputDialog";
 import {PlusOutlined} from "@ant-design/icons";
-
 
 interface ScoresOfStudentDialogProps {
   detailData?: API.StudentsDTO;
@@ -132,6 +131,14 @@ export default function ScoresOfStudentDialog(props: ScoresOfStudentDialogProps)
     return true;
   };
 
+  const handleDelete = async () => {
+    if (!selectedRowKeys?.length) return;
+    openConfirm(`确实要永久删除这 ${selectedRowKeys.length} 项吗？`, async () => {
+      await deleteScores(selectedRowKeys);
+      window.location.reload();
+    });
+  };
+
   return (
     <ModalForm
       width={800}
@@ -154,9 +161,9 @@ export default function ScoresOfStudentDialog(props: ScoresOfStudentDialogProps)
       }}
       open={props.visible}
     >
-      <ProTable<API.StudentsVO>
+      <ProTable<API.ScoreVO>
         actionRef={refAction}
-        rowKey="studentNum"
+        rowKey="id"
         request={async (params = {}) => {
           const data: API.ScoreQueryDTO = {
             ...params,
@@ -164,7 +171,24 @@ export default function ScoresOfStudentDialog(props: ScoresOfStudentDialogProps)
           };
           return convertPageData(await listScores(data));
         }}
+        tableAlertOptionRender={({
+                                   selectedRowKeys,
+                                   selectedRows,
+                                   onCleanSelected,
+                                 }) => {
+          return (
+            <Space size={16}>
+              <a style={{ marginInlineStart: 8 }} onClick={onCleanSelected}> 取消选择 </a>
+              <a onClick={handleDelete} style={{color: '#FF4D4F'}}>批量删除</a>
+            </Space>
+          );
+        }}
         columns={columns}
+        rowSelection={{
+          onChange: (rowKeys) => {
+            selectRow(rowKeys as number[]);
+          },
+        }}
         search={false}
         toolBarRender={() => [
           <Button

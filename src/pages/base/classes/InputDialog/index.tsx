@@ -25,7 +25,9 @@ export default function InputDialog(props: InputDialogProps) {
   for (let i = new Date().getFullYear() - isSpring; i >= new Date().getFullYear() - isSpring - 5; i--) {
     yearArray.push(i.toString());
   }
-  const defaultAcademicYear = new Date().getFullYear() - isSpring;
+
+  const defaultAcademicYear = props.detailData? Math.floor(props.detailData.id! / 100) : new Date().getFullYear() - isSpring;
+  const defaultClassOrder = props.detailData? props.detailData.id! % 100 : undefined;
 
   useEffect(() => {
     waitTime().then(() => {
@@ -38,7 +40,7 @@ export default function InputDialog(props: InputDialogProps) {
   }, [props.detailData, props.visible]);
 
   const onFinish = async (values: any) => {
-    const { attendanceYear, classNumber, chineseTeacher, mathTeacher, englishTeacher } = values;
+    const { attendanceYear, classOrder, chineseTeacher, mathTeacher, englishTeacher } = values;
     let id, className;
     const data: API.ClassesDTO = {
       id,
@@ -54,9 +56,9 @@ export default function InputDialog(props: InputDialogProps) {
         data.className = props.detailData.className;
         await updateAClass(data, { throwError: true });
       } else {
-        data.className = numberToChinese(new Date().getFullYear() - attendanceYear + 1 - isSpring) + '年级' + classNumber + '班';
-        if(classNumber < 10) data.id = Number(String(attendanceYear) + '0' + String(classNumber));
-        else data.id = Number(String(attendanceYear) + String(classNumber));
+        data.className = numberToChinese(new Date().getFullYear() - attendanceYear + 1 - isSpring) + '年级' + classOrder + '班';
+        if(classOrder < 10) data.id = Number(String(attendanceYear) + '0' + String(classOrder));
+        else data.id = Number(String(attendanceYear) + String(classOrder));
         await addAClass(data, { throwError: true });
       }
     } catch (ex) {
@@ -93,11 +95,11 @@ export default function InputDialog(props: InputDialogProps) {
           ]}
           options={yearArray}
           initialValue={defaultAcademicYear}
-          hidden={props.detailData !== undefined}
+          disabled={props.detailData !== undefined}
           showSearch
         />
         <ProFormDigit
-          name="classNumber"
+          name="classOrder"
           width="xs"
           label="班级序号"
           rules={[
@@ -108,7 +110,8 @@ export default function InputDialog(props: InputDialogProps) {
           ]}
           min={1}
           max={99}
-          hidden={props.detailData !== undefined}
+          initialValue={defaultClassOrder}
+          disabled={props.detailData !== undefined}
         />
       </ProForm.Group>
       <ProForm.Group>
@@ -138,12 +141,6 @@ export default function InputDialog(props: InputDialogProps) {
           name="englishTeacher"
           width="xs"
           label="英语教师"
-          rules={[
-            {
-              required: true,
-              message: '请输入英语教师！',
-            },
-          ]}
         />
       </ProForm.Group>
     </ModalForm>
