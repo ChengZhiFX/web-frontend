@@ -16,27 +16,27 @@ export default () => {
   const [selectedRowKeys, selectRow] = useState<number[]>([]);
   const [importVisible, setImportVisible] = useState(false);
   const [studentsInClassVisible, setStudentsInClassVisible] = useState(false);
-  const [inputStudentInClassVisible, setInputStudentInClassVisible] = useState(false);
   const [classes, setClasses] = useState<API.ClassesVO>();
   const [searchProps, setSearchProps] = useState<API.ClassesQueryDTO>({});
   const [visible, setVisible] = useState(false);
   const [downloading, setDownloading] = useState(false);
-  const [students, setStudents] = useState<API.StudentsVO>();
   const columns: ProColumns<API.ClassesVO>[] = [
     {
       title: '班级号',
       dataIndex: 'id',
-      width: 100,
+      width: 80,
+      sorter: true,
     },
     {
       title: '班级名称',
       dataIndex: 'className',
       width: 100,
+      sorter: true
     },
     {
       title: '班级人数',
       dataIndex: 'totalStudents',
-      width: 60,
+      width: 70,
       render: (dom, record) => {
         return (
           <a
@@ -97,7 +97,7 @@ export default () => {
           openConfirm(`确实要永久性地删除此记录吗？`, async () => {
             let arr:number[] = [record.id!];
             await deleteClasses(arr);
-            refAction.current?.reload();
+            window.location.reload();
           });
         }}
         style={{
@@ -176,7 +176,7 @@ export default () => {
             导入
           </Button>,
           <Button type="default" onClick={handleExport} loading={downloading} disabled={selectedRowKeys.length>0}>
-            <ExportOutlined /> 导出当前视图
+            <ExportOutlined /> 导出
           </Button>,
         ]}
         columns={columns}

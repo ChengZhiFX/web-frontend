@@ -31,16 +31,12 @@ export default () => {
       title: '姓名',
       dataIndex: 'studentName',
       width: 60,
+      search: false
     },
     {
       title: '学号',
       dataIndex: 'studentNum',
-      width: 120,
-    },
-    {
-      title: '班级号',
-      dataIndex: 'classId',
-      width: 80,
+      width: 100,
       sorter: true,
     },
     {
@@ -65,16 +61,16 @@ export default () => {
       search: false,
     },
     {
-      title: '总分',
+      title: '总成绩',
       dataIndex: 'totalScore',
-      width: 90,
+      width: 80,
       sorter: true,
       search: false,
     },
     {
       title: '学年',
       dataIndex: 'academicYear',
-      width: 80,
+      width: 70,
       sorter: true,
     },
     {
@@ -83,7 +79,7 @@ export default () => {
       filters: true,
       onFilter: true,
       ellipsis: true,
-      width: 80,
+      width: 70,
       valueType: 'select',
       valueEnum: {
         1: {
@@ -93,6 +89,12 @@ export default () => {
           text: '春季',
         },
       }
+    },
+    {
+      title: '班级号',
+      dataIndex: 'classId',
+      width: 80,
+      sorter: true,
     },
     {
       title: '录入时间',
@@ -125,7 +127,7 @@ export default () => {
             openConfirm(`确实要永久性地删除此记录吗？`, async () => {
               let arr:number[] = [record.id!];
               await deleteScores(arr);
-              refAction.current?.reload();
+              window.location.reload();
             });
           }}
           style={{
@@ -185,7 +187,11 @@ export default () => {
                 (pre, item) => pre + item.englishScore!,
                 0,
               ) / selectedRowKeys.length).toFixed(1)}`}</span>
-              <a style={{ marginInlineStart: 8 }} onClick={onCleanSelected}> 取消选择 </a>
+              <span>{`总平均分: ${(selectedRows.reduce(
+                (pre, item) => pre + item.totalScore!,
+                0,
+              ) / selectedRowKeys.length).toFixed(1)}`}</span>
+              <a style={{marginInlineStart: 8}} onClick={onCleanSelected}> 取消选择 </a>
               <a onClick={handleDelete} style={{color: '#FF4D4F'}}>批量删除</a>
             </Space>
           );
@@ -196,14 +202,14 @@ export default () => {
         }}
         toolBarRender={() => [
           <Button
-          type="primary"
-          key="primary"
+            type="primary"
+            key="primary"
           onClick={() => {
             setCalculateVisible(true);
           }}
           disabled={selectedRowKeys.length>0}
           >
-            <CalculatorOutlined />查询班级平均分
+            <CalculatorOutlined />计算班级平均分
           </Button>,
           <Button
             type="primary"
@@ -227,7 +233,7 @@ export default () => {
             导入
           </Button>,
           <Button type="default" onClick={handleExport} loading={downloading} disabled={selectedRowKeys.length>0}>
-            <ExportOutlined /> 导出当前视图
+            <ExportOutlined /> 导出
           </Button>,
         ]}
         columns={columns}

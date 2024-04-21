@@ -1,6 +1,6 @@
 import {ModalForm, ProForm, ProFormInstance, ProFormSelect, ProFormText, ProFormDependency } from '@ant-design/pro-components';
 import {Input, message} from 'antd';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { waitTime } from '@/utils/request';
 import {addAScore, listScores, updateAScore} from '@/services/api/score';
 import { listStudentsMaps } from '@/services/api/students';
@@ -21,11 +21,7 @@ export const studentsRecord = await listStudentsMaps();
 export default function InputDialog(props: InputDialogProps) {
   const form = useRef<ProFormInstance>(null);
   const option:options[] =[{value:1,label:'秋季'},{value:2,label:'春季'}]
-  const yearArray: string[] = []
   const isSpring: number = new Date().getMonth()<8? 1:0;
-  for (let i = new Date().getFullYear() - isSpring; i >= new Date().getFullYear() - isSpring - 5; i--) {
-    yearArray.push(i.toString());
-  }
   const defaultAcademicYear = new Date().getFullYear() - isSpring;
   const defaultSemester = isSpring + 1;
 
@@ -67,19 +63,14 @@ export default function InputDialog(props: InputDialogProps) {
       if (props.detailData?.academicYear && props.detailData?.semester) {
         await updateAScore(data, { throwError: true });
       } else {
-        // if(false){
-        //   await listScores(data);
-        //   message.error('!');
-        //   return true;
-        // }
         await addAScore(data, { throwError: true });
       }
     } catch (ex) {
       return true;
     }
-
     props.onClose(true);
     message.success('您是最新的！');
+    window.location.reload();
     return true;
   };
 
@@ -110,7 +101,7 @@ export default function InputDialog(props: InputDialogProps) {
           options={studentsNumOption}
           showSearch
           fieldProps={{
-            placeholder: '请输入或选择',
+            placeholder: '必填',
           }}
         />
         <ProFormDependency
@@ -127,7 +118,7 @@ export default function InputDialog(props: InputDialogProps) {
               <ProFormText
                 width="xs"
                 name={studentName}
-                label="对应学生姓名"
+                label="姓名(自动匹配)"
                 disabled
                 initialValue={studentName}
                 fieldProps={{
@@ -139,21 +130,38 @@ export default function InputDialog(props: InputDialogProps) {
         </ProFormDependency>
       </ProForm.Group>
       <ProForm.Group>
-        <ProFormSelect
-          name="academicYear"
-          width="xs"
-          label="学年"
-          rules={[
-            {
-              required: true,
-              message: '请输入学年！',
-            },
-          ]}
-          initialValue={defaultAcademicYear}
-          options={yearArray}
-          disabled={(props.detailData?.academicYear && props.detailData?.semester) !== undefined}
-          showSearch
-        />
+        <ProFormDependency
+          key="studentNum"
+          name={['studentNum']}
+          ignoreFormListField
+        >
+          {({ studentNum }) => {
+            const yearArray: string[] = []
+            for (let i = new Date().getFullYear() - isSpring; i >= Math.floor(studentNum / 1000000); i--) {
+              yearArray.push(i.toString());
+            }
+            return (
+              <ProFormSelect
+                name="academicYear"
+                width="xs"
+                label="学年"
+                rules={[
+                  {
+                    required: true,
+                    message: '请输入学年！',
+                  },
+                ]}
+                initialValue={defaultAcademicYear}
+                options={yearArray}
+                disabled={(props.detailData?.academicYear && props.detailData?.semester) !== undefined}
+                showSearch
+                fieldProps={{
+                  placeholder: '必填',
+                }}
+              />
+            );
+          }}
+        </ProFormDependency>
         <ProFormSelect
           name="semester"
           width="xs"
@@ -167,6 +175,9 @@ export default function InputDialog(props: InputDialogProps) {
           options={option}
           initialValue={defaultSemester}
           disabled={(props.detailData?.academicYear && props.detailData?.semester) !== undefined}
+          fieldProps={{
+            placeholder: '必填',
+          }}
         />
       </ProForm.Group>
       <ProForm.Group>
@@ -177,16 +188,17 @@ export default function InputDialog(props: InputDialogProps) {
           rules={[
             () => ({
               validator(_, value) {
-                if (value <= 100 && value >= 0) {
+                if (value === undefined || value === null || (value <= 100 && value >= 0)) {
                   return Promise.resolve();
                 }
                 else {
                   return Promise.reject(new Error("请输入0~100之间的数值"));
                 }
               },
-              required: true,
+              required: false,
             }),
           ]}
+          tooltip='留空则默认为0'
         />
         <ProFormText
           name="mathScore"
@@ -195,35 +207,51 @@ export default function InputDialog(props: InputDialogProps) {
           rules={[
             () => ({
               validator(_, value) {
-                if (value <= 100 && value >= 0) {
+                if (value === undefined || value === null || (value <= 100 && value >= 0)) {
                   return Promise.resolve();
                 }
                 else {
                   return Promise.reject(new Error("请输入0~100之间的数值"));
                 }
               },
-              required: true,
+              required: false,
             }),
           ]}
+          tooltip='留空则默认为0'
         />
-        <ProFormText
-          name="englishScore"
-          width="xs"
-          label="英语成绩"
-          rules={[
-            () => ({
-              validator(_, value) {
-                if (value <= 100 && value >= 0) {
-                  return Promise.resolve();
-                }
-                else {
-                  return Promise.reject(new Error("请输入0~100之间的数值"));
-                }
-              },
-              required: true,
-            }),
-          ]}
-        />
+        <ProFormDependency
+          key="studentNum"
+          name={['studentNum']}
+          ignoreFormListField
+        >
+          {({ studentNum }) => {
+            return (
+              <ProFormText
+                name="englishScore"
+                width="xs"
+                label="英语成绩"
+                rules={[
+                  () => ({
+                    validator(_, value) {
+                      if (value === undefined || value === null || (value <= 100 && value >= 0)) {
+                        return Promise.resolve();
+                      }
+                      else {
+                        return Promise.reject(new Error("请输入0~100之间的数值"));
+                      }
+                    },
+                    required: false,
+                  }),
+                ]}
+                disabled={new Date().getFullYear() - Math.floor(studentNum / 1000000) + 1 - isSpring < 3}
+                fieldProps={{
+                  placeholder: new Date().getFullYear() - Math.floor(studentNum / 1000000) + 1 - isSpring < 3 ? '无': '请输入',
+                }}
+                tooltip='留空则默认为0'
+              />
+            );
+          }}
+        </ProFormDependency>
       </ProForm.Group>
     </ModalForm>
   );

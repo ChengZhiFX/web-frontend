@@ -61,6 +61,7 @@ export default function InputDialog(props: InputDialogProps) {
     }
     props.onClose(true);
     message.success('您是最新的！');
+    window.location.reload();
     return true;
   };
 

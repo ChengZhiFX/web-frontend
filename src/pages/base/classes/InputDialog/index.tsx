@@ -1,4 +1,12 @@
-import {ModalForm, ProForm, ProFormInstance, ProFormSelect, ProFormText, ProFormDigit} from '@ant-design/pro-components';
+import {
+  ModalForm,
+  ProForm,
+  ProFormInstance,
+  ProFormSelect,
+  ProFormText,
+  ProFormDigit,
+  ProFormDependency
+} from '@ant-design/pro-components';
 import {message} from 'antd';
 import React, {useEffect, useRef} from 'react';
 import {waitTime} from '@/utils/request';
@@ -64,9 +72,9 @@ export default function InputDialog(props: InputDialogProps) {
     } catch (ex) {
       return true;
     }
-
     props.onClose(true);
     message.success('您是最新的！');
+    window.location.reload();
     return true;
   };
 
@@ -98,20 +106,46 @@ export default function InputDialog(props: InputDialogProps) {
           disabled={props.detailData !== undefined}
           showSearch
         />
+        <ProFormDependency
+          key="attendanceYear"
+          name={['attendanceYear']}
+          ignoreFormListField
+        >
+          {({ attendanceYear }) => {
+            return (
+              <ProFormText
+                name={numberToChinese(new Date().getFullYear() - attendanceYear + 1 - isSpring) + '年级'}
+                width="xs"
+                label="年级(自动匹配)"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+                disabled
+                initialValue={numberToChinese(new Date().getFullYear() - attendanceYear + 1 - isSpring) + '年级'}
+                fieldProps={{
+                  placeholder: '',
+                }}
+              />
+            );
+          }}
+        </ProFormDependency>
         <ProFormDigit
           name="classOrder"
           width="xs"
-          label="班级序号"
+          label="年级内班级序号"
           rules={[
             {
               required: true,
-              message: '请输入班级序号！',
+              message: '请输入年级内班级序号！',
             },
           ]}
           min={1}
           max={99}
           initialValue={defaultClassOrder}
           disabled={props.detailData !== undefined}
+          tooltip='本年级内的几班'
         />
       </ProForm.Group>
       <ProForm.Group>
@@ -137,11 +171,31 @@ export default function InputDialog(props: InputDialogProps) {
             },
           ]}
         />
-        <ProFormText
-          name="englishTeacher"
-          width="xs"
-          label="英语教师"
-        />
+        <ProFormDependency
+          key="attendanceYear"
+          name={['attendanceYear']}
+          ignoreFormListField
+        >
+          {({ attendanceYear }) => {
+            return (
+              <ProFormText
+                name="englishTeacher"
+                width="xs"
+                label="英语教师"
+                rules={[
+                  {
+                    required: new Date().getFullYear() - attendanceYear + 1 - isSpring >= 3,
+                    message: '请输入英语教师！',
+                  },
+                ]}
+                disabled={new Date().getFullYear() - attendanceYear + 1 - isSpring < 3}
+                fieldProps={{
+                  placeholder: new Date().getFullYear() - attendanceYear + 1 - isSpring < 3 ? '无': '请输入',
+                }}
+              />
+            );
+          }}
+        </ProFormDependency>
       </ProForm.Group>
     </ModalForm>
   );

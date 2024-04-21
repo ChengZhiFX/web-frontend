@@ -5,8 +5,9 @@ import { Button, message, Space} from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import {deleteStudents, listStudents} from "@/services/api/students";
 import {openConfirm} from "@/utils/ui";
-import { PlusOutlined } from "@ant-design/icons";
+import {ExportOutlined, PlusOutlined} from "@ant-design/icons";
 import InputStudentInClassDialog from "@/pages/base/classes/InputStudentInClassDialog";
+import {downloadFile} from "@/utils/download-utils";
 
 interface StudentsInClassDialogProps {
   detailData?: API.ClassesDTO;
@@ -16,7 +17,7 @@ interface StudentsInClassDialogProps {
 
 export default function StudentsInClassDialog(props: StudentsInClassDialogProps) {
   const refAction = useRef<ActionType>(null);
-  const [searchProps, setSearchProps] = useState<API.ClassesQueryDTO>({});
+  const [downloading, setDownloading] = useState(false);
   const [students, setStudents] = useState<API.StudentsVO>();
   const [visible, setVisible] = useState(false);
   const form = useRef<ProFormInstance>(null);
@@ -103,7 +104,7 @@ export default function StudentsInClassDialog(props: StudentsInClassDialogProps)
 
   const onFinish = async (values: any) => {
     props.onClose(true);
-    refAction.current?.reload();
+    window.location.reload();
     return true;
   };
 
@@ -111,7 +112,18 @@ export default function StudentsInClassDialog(props: StudentsInClassDialogProps)
     if (!selectedRowKeys?.length) return;
     openConfirm(`确实要永久删除这 ${selectedRowKeys.length} 项吗？`, async () => {
       await deleteStudents(selectedRowKeys);
-      window.location.reload();
+      refAction.current?.clearSelected!();
+      refAction.current?.reload();
+    });
+  };
+
+  const handleExport = () => {
+    const searchProps: API.StudentsQueryDTO = {
+      classId: props.detailData?.id,
+    };
+    setDownloading(true);
+    downloadFile(`/api/students/exportStudents`, searchProps, props.detailData?.className + '的学生表.xls').then(() => {
+      waitTime(1000).then(() => setDownloading(false));
     });
   };
 
@@ -160,6 +172,9 @@ export default function StudentsInClassDialog(props: StudentsInClassDialogProps)
             disabled={selectedRowKeys.length>0}
           >
             <PlusOutlined /> 新建
+          </Button>,
+          <Button type="default" onClick={handleExport} loading={downloading} disabled={selectedRowKeys.length>0}>
+            <ExportOutlined /> 导出
           </Button>,
         ]}
         rowSelection={{

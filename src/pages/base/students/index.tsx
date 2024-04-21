@@ -31,6 +31,7 @@ export default () => {
       title: '姓名',
       dataIndex: 'studentName',
       width: 80,
+      sorter: true
     },
     {
       title: '学号',
@@ -41,7 +42,6 @@ export default () => {
     {
       title: '性别',
       dataIndex: 'gender',
-      search: false,
       filters: true,
       onFilter: true,
       ellipsis: true,
@@ -62,7 +62,7 @@ export default () => {
     {
       title: '班级号',
       dataIndex: 'classId',
-      width: 80,
+      width: 60,
       sorter: true,
     },
     {
@@ -79,7 +79,7 @@ export default () => {
     },
     {
       title: '操作',
-      width: 120,
+      width: 140,
       fixed: 'right',
       dataIndex: 'option',
       valueType: 'option',
@@ -108,7 +108,7 @@ export default () => {
           openConfirm(`确实要永久性地删除此记录吗？`, async () => {
             let arr:number[] = [record.id!];
             await deleteStudents(arr);
-            refAction.current?.reload();
+            window.location.reload();
           });
         }}
         style={{
@@ -188,7 +188,7 @@ export default () => {
             导入
           </Button>,
           <Button type="default" onClick={handleExport} loading={downloading} disabled={selectedRowKeys.length>0}>
-            <ExportOutlined /> 导出当前视图
+            <ExportOutlined /> 导出
           </Button>,
         ]}
         columns={columns}

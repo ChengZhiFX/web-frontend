@@ -16,7 +16,7 @@ export default (props: InputDialogProps) => {
   const [downloading, setDownloading] = useState(false);
   const handleExport = () => {
     setDownloading(true);
-    downloadFile(`/api/score/exportScoreTemplate`, null, '成绩列表.xls').then(() => {
+    downloadFile(`/api/score/exportScoreTemplate`, null, '成绩导入模板.xls').then(() => {
       waitTime(1000).then(() => setDownloading(false));
     });
   };
@@ -38,6 +38,7 @@ export default (props: InputDialogProps) => {
     if (json?.success) {
       message.success(`上传成功，共导入${json?.data || 0}条数据`);
       props.onClose(json?.data || 0);
+      window.location.reload();
       return true;
     }
 

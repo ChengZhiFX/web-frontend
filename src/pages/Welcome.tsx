@@ -2,12 +2,20 @@ import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import { Card, theme } from 'antd';
 import React from 'react';
+import { getTotalClasses } from "@/services/api/classes";
+import { getTotalStudents } from "@/services/api/students";
+import { getTotalScores } from "@/services/api/score";
 
 /**
  * 每个单独的卡片，为了复用样式抽成了组件
  * @param param0
  * @returns
  */
+
+const totalOfClasses: number = (await getTotalClasses())!;
+const totalOfStudents: number = (await getTotalStudents())!;
+const totalOfScores: number = (await getTotalScores())!;
+
 const InfoCard: React.FC<{
   title: string;
   index: number;
@@ -114,7 +122,7 @@ const Welcome: React.FC = () => {
               color: token.colorTextHeading,
             }}
           >
-            欢迎使用学生成绩管理系统
+            有朋自远方来，不亦乐乎。欢迎你使用学生成绩管理系统
           </div>
           <p
             style={{
@@ -139,19 +147,19 @@ const Welcome: React.FC = () => {
               index={1}
               href="/base/classes"
               title="班级管理"
-              desc="点击下面连接开始管理您的班级。"
+              desc={"当前数据库中有 " + totalOfClasses + " 个班级。点击下面链接开始管理您的班级。"}
             />
             <InfoCard
               index={2}
               title="学生管理"
               href="/base/students"
-              desc="点击下面连接开始管理您的学生。"
+              desc={"当前数据库中有 " + totalOfStudents + " 名学生。点击下面链接开始管理您的学生。"}
             />
             <InfoCard
               index={3}
               title="成绩管理"
               href="/base/score"
-              desc="点击下面连接开始管理您的成绩库。"
+              desc={"当前数据库中有 " + totalOfScores + " 条成绩。点击下面链接开始管理您的成绩库。"}
             />
           </div>
         </div>
